@@ -30,9 +30,15 @@ end
 
 def lambda_handler(event:, context:)
   puts 'Starting the color change.'
+
+  # Get the record
+  # first_record = event["Records"].first
+  click_type = event["clickType"]
+  puts "|=== #{event} ===|"
   request = HTTPI::Request.new("https://api.smartthings.com/v1/devices/#{ENV['BULB_DEVICE_ID']}/commands")
   request.headers['Authorization'] = 'Bearer ' + ENV['LIMITED_TOKEN']
-  color_to_change_to = {hue: rand(0..100), saturation: rand(5..100)}
+  color_to_change_to = {hue: rand(0..100), saturation: rand(50..100)}
+  color_to_change_to = {hue: 0, saturation: 0} if click_type == 'DOUBLE'
   request.body = [
     {
       command: 'on',
@@ -58,5 +64,7 @@ def lambda_handler(event:, context:)
   response = HTTPI.post(request)
   puts "Done! | #{response.code} | #{response.body}"
 
-  { statusCode: 200, body: JSON.generate("Changing to: #{color_to_change_to} | #{response.code} | #{response.body}") }
+  { statusCode: 200, body: JSON.generate("Changing to: | #{click_type} | #{color_to_change_to} | #{response.code} | #{response.body}") }
 end
+
+# lambda_handler(event: {"clickType": "DOUBLE"}.to_json, context: nil) if ENV['LAMBDA_ENV'].nil? || ENV['LAMBDA_ENV'] == 'development'
