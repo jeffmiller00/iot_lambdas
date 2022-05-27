@@ -4,7 +4,7 @@ GEM
     httpi (2.4.4)
       rack
       socksify
-    rack (2.2.3)
+    rack (2.2.3.1)
     socksify (1.7.1)
 
 PLATFORMS
